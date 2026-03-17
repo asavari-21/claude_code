@@ -35,7 +35,23 @@ int main(int argc, char* argv[]) {
         {"model", "anthropic/claude-haiku-4.5"},
         {"messages", json::array({
             {{"role", "user"}, {"content", prompt}}
-        })}
+        })},
+        {"type": "function",
+            "function": {
+                "name": "Read",
+                "description": "Read and return contents of a file",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "file_path": {
+                            "type": "string",
+                            "description": "Path to the file to read"
+                        }
+                    },
+                    "required": json::array("file_path")
+                }
+            }
+        }
     };
 
     cpr::Response response = cpr::Post(
@@ -44,8 +60,10 @@ int main(int argc, char* argv[]) {
             {"Authorization", "Bearer " + api_key},
             {"Content-Type", "application/json"}
         },
+        // dump -> converts json to string 
         cpr::Body{request_body.dump()}
     );
+
 
     if (response.status_code != 200) {
         std::cerr << "HTTP error: " << response.status_code << std::endl;
