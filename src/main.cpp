@@ -40,21 +40,23 @@ int main(int argc, char* argv[]) {
             }
         })},
         {"tools", json::array({
-            {"type", "function"},
-            {"function", {
-                {"name", "Read"},
-                {"description", "Read and return contents of a file"},
-                {"parameters", {
-                    {"type", "object"},
-                    {"properties", {
-                        {"file_path", {
-                            {"type", "string"},
-                            {"description", "Path to the file to read"}
-                        }}
-                    }},
-                    {"required", json::array({"file_path"})}
-                }}                            
-            }}
+            {
+                {"type", "function"},
+                {"function", {
+                    {"name", "Read"},
+                    {"description", "Read and return contents of a file"},
+                    {"parameters", {
+                        {"type", "object"},
+                        {"properties", {
+                            {"file_path", {
+                                {"type", "string"},
+                                {"description", "Path to the file to read"}
+                            }}
+                        }},
+                        {"required", json::array({"file_path"})}
+                    }}                            
+                }}
+            }
         })}
     };
 
@@ -87,17 +89,19 @@ int main(int argc, char* argv[]) {
 
     std::string output = result["choices"][0]["message"]["content"].get<std::string>();
 
-    std::string number;
-    for(char c : output){
-        if (isdigit(c)) number += c;
-    }
+    // std::string number;
+    // for(char c : output){
+    //     if (isdigit(c)) number += c;
+    // }
 
-    if (number.empty()){
-        std::cerr << "No number found in response\n";
-        return 1;
-    }
+    // if (number.empty()){
+    //     std::cerr << "No number found in response\n";
+    //     return 1;
+    // }
 
-    std::cout << number;
-    
+    // std::cout << number;
+
+    std::cout << output;
+
     return 0;
 }
