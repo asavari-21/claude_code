@@ -81,8 +81,9 @@ int main(int argc, char* argv[]) {
 
     auto message = result["choices"][0]["message"];
 
-    if (message.contains("tool_calls")){
+    if (message.contains("tool_calls") && !message["tool_calls"].empty()){
         auto tool_call = message["tool_calls"][0];
+
         std::string function_name = tool_call["function"]["name"];
         std::string arguments_str = tool_call["fucntion"]["arguments"];
 
@@ -104,9 +105,11 @@ int main(int argc, char* argv[]) {
         }
 
         return 0;
+
     } else {
-        std::string output = message["content"].get<std::string>();
-        std::cout << output;
+        if(!message["content"].is_null()){
+        std::cout << message["content"].get<std::string>();
+        }
     }
 
     if (!result.contains("choices") || result["choices"].empty()) {
