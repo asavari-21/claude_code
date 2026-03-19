@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
         std::string function_name = tool_call["function"]["name"];
         std::string arguments_str = tool_call["fucntion"]["arguments"];
 
-        json args = json::parse(arguments_str)
+        json args = json::parse(arguments_str);
 
         if (function_name == "Read"){
             std::string file_path = args["file_path"];
