@@ -85,7 +85,19 @@ int main(int argc, char* argv[]) {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
     std::cerr << "Logs from your program will appear here!" << std::endl;
 
-    std::cout << result["choices"][0]["message"]["content"].get<std::string>();
+    std::string output = result["choices"][0]["message"]["content"].get<std::string>();
 
+    std::string number;
+    for(char c : output){
+        if (isdigit(c)) number += c;
+    }
+
+    if (number.empty()){
+        std::cerr << "No number found in response\n";
+        return 1;
+    }
+
+    std::cout << number;
+    
     return 0;
 }
