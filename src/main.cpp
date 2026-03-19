@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <fstream>
 
 #include <cpr/cpr.h>
 #include <nlohmann/json.hpp>
@@ -85,7 +86,7 @@ int main(int argc, char* argv[]) {
         auto tool_call = message["tool_calls"][0];
 
         std::string function_name = tool_call["function"]["name"];
-        std::string arguments_str = tool_call["fucntion"]["arguments"];
+        std::string arguments_str = tool_call["function"]["arguments"];
 
         json args = json::parse(arguments_str);
 
@@ -120,7 +121,7 @@ int main(int argc, char* argv[]) {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
     // std::cerr << "Logs from your program will appear here!" << std::endl;
 
-    std::cout << result["choices"][0]["message"]["content"].get<std::string>();
+    // std::cout << result["choices"][0]["message"]["content"].get<std::string>();
 
     return 0;
 }
