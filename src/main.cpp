@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
         return 0;
     } else {
         std::string output = message["content"].get<std::string>();
-        std::cou << output;
+        std::cout << output;
     }
 
     if (!result.contains("choices") || result["choices"].empty()) {
