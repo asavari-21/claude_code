@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
         if (function_name == "Read"){
             std::string file_path = args["file_path"];
 
-            std::ifstream file(filepath);
+            std::ifstream file(file_path);
             if (!file.is_open()){
                 std::cerr << "Failed to open file\n";
                 return 1;
