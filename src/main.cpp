@@ -80,6 +80,7 @@ int main(int argc, char* argv[]) {
     json result = json::parse(response.text);
 
     auto message = result["choices"][0]["message"];
+
     if (message.contains("tool_calls")){
         auto tool_call = message["tool_calls"][0];
         std::string function_name = tool_call["function"]["name"];
@@ -101,6 +102,11 @@ int main(int argc, char* argv[]) {
                 std::cout << line << "\n";
             }
         }
+
+        return 0;
+    } else {
+        std::string output = message["content"].get<std::string>();
+        std::cou << output;
     }
 
     if (!result.contains("choices") || result["choices"].empty()) {
