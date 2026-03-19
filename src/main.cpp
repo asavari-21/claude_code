@@ -79,29 +79,39 @@ int main(int argc, char* argv[]) {
 
     json result = json::parse(response.text);
 
+    auto message = result["choices"][0]["message"];
+    if (message.contains("tool_calls")){
+        auto tool_call = message["tool_calls"][0];
+        std::string function_name = tool_call["function"]["name"];
+        std::string arguments_str = tool_call["fucntion"]["arguments"];
+
+        json args = json::parse(arguments_str)
+
+        if (function_name == "Read"){
+            std::string file_path = args["file_path"];
+
+            std::ifstream file(filepath);
+            if (!file.is_open()){
+                std::cerr << "Failed to open file\n";
+                return 1;
+            }
+
+            std::string line;
+            while (std::getline(file, line)){
+                std::cout << line << "\n";
+            }
+        }
+    }
+
     if (!result.contains("choices") || result["choices"].empty()) {
         std::cerr << "No choices in response" << std::endl;
         return 1;
     }
 
     // You can use print statements as follows for debugging, they'll be visible when running tests.
-    std::cerr << "Logs from your program will appear here!" << std::endl;
+    // std::cerr << "Logs from your program will appear here!" << std::endl;
 
-    std::string output = result["choices"][0]["message"]["content"].get<std::string>();
-
-    // std::string number;
-    // for(char c : output){
-    //     if (isdigit(c)) number += c;
-    // }
-
-    // if (number.empty()){
-    //     std::cerr << "No number found in response\n";
-    //     return 1;
-    // }
-
-    // std::cout << number;
-
-    std::cout << output;
+    std::cout << result["choices"][0]["message"]["content"].get<std::string>();
 
     return 0;
 }
