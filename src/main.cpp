@@ -40,8 +40,7 @@ int main(int argc, char* argv[]) {
             }
         })},
         {"type", "function"},
-        {"function", json::array({
-            {
+        {"function", {
                 {"name", "Read"},
                 {"description", "Read and return contents of a file"},
                 {"parameters", {
@@ -55,7 +54,7 @@ int main(int argc, char* argv[]) {
                     {"required", json::array({"file_path"})}
                 }}
             }                
-        })}
+        }
     };
 
 
