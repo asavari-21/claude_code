@@ -42,21 +42,20 @@ int main(int argc, char* argv[]) {
         {"tools", json::array({
             {"type", "function"},
             {"function", {
-                    {"name", "Read"},
-                    {"description", "Read and return contents of a file"},
-                    {"parameters", {
-                        {"type", "object"},
-                        {"properties", {
-                            {"file_path", {
-                                {"type", "string"},
-                                {"description", "Path to the file to read"}
-                            }}
-                        }},
-                        {"required", json::array({"file_path"})}
-                    }}
-                }                
-            }
-        })
+                {"name", "Read"},
+                {"description", "Read and return contents of a file"},
+                {"parameters", {
+                    {"type", "object"},
+                    {"properties", {
+                        {"file_path", {
+                            {"type", "string"},
+                            {"description", "Path to the file to read"}
+                        }}
+                    }},
+                    {"required", json::array({"file_path"})}
+                }}                            
+            }}
+        })}
     };
 
 
