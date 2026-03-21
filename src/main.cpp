@@ -33,7 +33,8 @@ int main(int argc, char* argv[]) {
     }
 
     json request_body = {
-        {"model", "anthropic/claude-haiku-4.5"},
+        // {"model", "anthropic/claude-haiku-4.5"},
+        {"model", "openai/gpt-4o-mini"},
         {"messages", json::array({
             {
                 {"role", "user"},
@@ -68,7 +69,6 @@ int main(int argc, char* argv[]) {
             {"Authorization", "Bearer " + api_key},
             {"Content-Type", "application/json"}
         },
-        // dump -> converts json to string 
         cpr::Body{request_body.dump()}
     );
 
@@ -101,7 +101,7 @@ int main(int argc, char* argv[]) {
 
             std::string line;
             while (std::getline(file, line)){
-                std::cout << line << "\n";
+                std::cout << line << std::endl;
             }
         }
 
@@ -109,12 +109,12 @@ int main(int argc, char* argv[]) {
 
     } else {
         if(!message["content"].is_null()){
-        std::cout << message["content"].get<std::string>();
+        std::cout << message["content"].get<std::string>() << std::endl;
         }
     }
 
     if (!result.contains("choices") || result["choices"].empty()) {
-        std::cerr << "No choices in response" << std::endl;
+        std::cerr << "No choices in response\n" << std::endl;
         return 1;
     }
 
