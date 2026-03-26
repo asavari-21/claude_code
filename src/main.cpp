@@ -32,91 +32,95 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    json request_body = {
-        // {"model", "anthropic/claude-haiku-4.5"},
-        {"model", "openai/gpt-4o-mini"},
-        {"messages", json::array({
-            {
-                {"role", "user"},
-                {"content", prompt}
-            }
-        })},
-        {"tools", json::array({
-            {
-                {"type", "function"},
-                {"function", {
-                    {"name", "Read"},
-                    {"description", "Read and return contents of a file"},
-                    {"parameters", {
-                        {"type", "object"},
-                        {"properties", {
-                            {"file_path", {
-                                {"type", "string"},
-                                {"description", "Path to the file to read"}
-                            }}
-                        }},
-                        {"required", json::array({"file_path"})}
-                    }}                            
-                }}
-            }
-        })}
-    };
+    json messages = json::array({
+        {
+            {"role", "user"},
+            {"content", prompt}
+        }
+    });
 
+    while (true){        
+        json request_body = {
+            {"model", "anthropic/claude-haiku-4.5"},
+            {"messages", messages},
+            {"tools", json::array({
+                {
+                    {"type", "function"},
+                    {"function", {
+                        {"name", "Read"},
+                        {"description", "Read and return contents of a file"},
+                        {"parameters", {
+                            {"type", "object"},
+                            {"properties", {
+                                {"file_path", {
+                                    {"type", "string"},
+                                    {"description", "Path to the file to read"}
+                                }}
+                            }},
+                            {"required", json::array({"file_path"})}
+                        }}                            
+                    }}
+                }
+            })}
+        };
 
-    cpr::Response response = cpr::Post(
-        cpr::Url{base_url + "/chat/completions"},
-        cpr::Header{
-            {"Authorization", "Bearer " + api_key},
-            {"Content-Type", "application/json"}
-        },
-        cpr::Body{request_body.dump()}
-    );
-
-
-    if (response.status_code != 200) {
-        std::cerr << "HTTP error: " << response.status_code << std::endl;
-        return 1;
-    }
-
-    json result = json::parse(response.text);
-
-    auto message = result["choices"][0]["message"];
-
-    if (message.contains("tool_calls") && !message["tool_calls"].empty()){
-        auto tool_call = message["tool_calls"][0];
-
-        std::string function_name = tool_call["function"]["name"];
-        std::string arguments_str = tool_call["function"]["arguments"];
-
-        json args = json::parse(arguments_str);
-
-        if (function_name == "Read"){
-            std::string file_path = args["file_path"];
-
-            std::ifstream file(file_path);
-            if (!file.is_open()){
-                std::cerr << "Failed to open file\n";
-                return 1;
-            }
-
-            std::string line;
-            while (std::getline(file, line)){
-                std::cout << line << std::endl;
-            }
+        cpr::Response response = cpr::Post(
+            cpr::Url{base_url + "/chat/completions"},
+            cpr::Header{
+                {"Authorization", "Bearer " + api_key},
+                {"Content-Type", "application/json"}
+            },
+            cpr::Body{request_body.dump()}
+        );
+        
+        if (response.status_code != 200) {
+            std::cerr << "HTTP error: " << response.status_code << std::endl;
+            return 1;
         }
 
-        return 0;
+        json result = json::parse(response.text);
 
-    } else {
-        if(!message["content"].is_null()){
-        std::cout << message["content"].get<std::string>() << std::endl;
+        auto message = result["choices"][0]["message"];
+        messages.push_back(message);
+
+        if (message.contains("tool_calls") && !message["tool_calls"].empty()){
+            auto tool_call = message["tool_calls"][0];
+
+            std::string tool_call_id = tool_call["id"];
+            std::string function_name = tool_call["function"]["name"];
+            std::string arguments_str = tool_call["function"]["arguments"];
+
+            json args = json::parse(arguments_str);
+
+            std::string result_content;
+
+            if (function_name == "Read"){
+                std::string file_path = args["file_path"];
+
+                std::ifstream file(file_path);
+                if (!file.is_open()){
+                    result_content = "Failed to open file\n";
+                } else{
+                    std::string line;
+                    while (std::getline(file, line)){
+                        result_content += line +  "\n";
+                    }
+                }
+            }
+
+            messages.push_back({
+                {"role", "tool"},
+                {"tool_call_id", tool_call_id},
+                {"content", result_content}
+            });
+
+        } else {
+            if(message.contains("content") && !message["content"].is_null()){
+                std::cout << message["content"].get<std::string>() << std::endl;
+            }
+            break;
         }
-    }
-
-    if (!result.contains("choices") || result["choices"].empty()) {
-        std::cerr << "No choices in response\n" << std::endl;
-        return 1;
-    }
+    }    
 
     // You can use print statements as follows for debugging, they'll be visible when running tests.
     // std::cerr << "Logs from your program will appear here!" << std::endl;
