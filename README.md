@@ -1,34 +1,33 @@
-[![progress-banner](https://backend.codecrafters.io/progress/claude-code/b40d4eda-941f-4a7e-9521-d14e80e4a31b)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+# AI CLI Agent (C++)
 
-This is a starting point for C++ solutions to the
-["Build Your own Claude Code" Challenge](https://codecrafters.io/challenges/claude-code).
+A lightweight command-line AI agent written in C++ that interacts with an LLM via HTTP and supports tool-based execution.
 
-Claude Code is an AI coding assistant that uses Large Language Models (LLMs) to
-understand code and perform actions through tool calls. In this challenge,
-you'll build your own Claude Code from scratch by implementing an LLM-powered
-coding assistant.
+## Features
 
-Along the way you'll learn about HTTP RESTful APIs, OpenAI-compatible tool
-calling, agent loop, and how to integrate multiple tools into an AI assistant.
+- Chat with an LLM using a prompt (`-p` flag)
+- Persistent conversation loop (agent-style interaction)
+- Built-in tool support:
+  - **Read** – Read file contents
+  - **Write** – Create or overwrite files
+  - **Bash** – Execute shell commands
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+## How It Works
 
-# Passing the first stage
+The program:
+1. Sends user input to an LLM API
+2. Receives responses (including tool calls)
+3. Executes requested tools locally
+4. Feeds results back to the model
+5. Repeats until a final response is generated
 
-The entry point for your `claude-code` implementation is in `src/main.cpp`.
-Study and uncomment the relevant code, and submit to pass the first stage:
+## Requirements
 
-```sh
-codecrafters submit
-```
+- C++17+
+- `cpr` (HTTP client)
+- `nlohmann/json`
+- OpenRouter API key
 
-# Stage 2 & beyond
+## Setup
 
-Note: This section is for stages 2 and beyond.
-
-1. Ensure you have `cmake` installed locally.
-2. Run `./your_program.sh` to run your program, which is implemented in
-   `src/main.cpp`.
-3. Run `codecrafters submit` to submit your solution to CodeCrafters. Test
-   output will be streamed to your terminal.
+```bash
+export OPENROUTER_API_KEY="your_api_key_here"
