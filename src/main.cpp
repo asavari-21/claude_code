@@ -41,6 +41,7 @@ int main(int argc, char* argv[]) {
 
     while (true){        
         json request_body = {
+            // {"model", "openai/gpt-4o-mini"},
             {"model", "anthropic/claude-haiku-4.5"},
             {"messages", messages},
             {"tools", json::array({
@@ -58,6 +59,44 @@ int main(int argc, char* argv[]) {
                                 }}
                             }},
                             {"required", json::array({"file_path"})}
+                        }}                            
+                    }}
+                },
+                {
+                    {"type", "function"},
+                    {"function", {
+                        {"name", "Write"},
+                        {"description", "Write content to a file"},
+                        {"parameters", {
+                            {"type", "object"},                            
+                            {"properties", {
+                                {"file_path", {
+                                    {"type", "string"},
+                                    {"description", "The path of the file to write to"}
+                                }},
+                                {"content", {
+                                    {"type", "string"},
+                                    {"description", "The content to write to the file"}
+                                }}
+                            }},
+                            {"required", json::array({"file_path", "content"})}
+                        }}                            
+                    }}
+                },
+                {
+                    {"type", "function"},
+                    {"function", {
+                        {"name", "Bash"},
+                        {"description", "Execute a shell command"},
+                        {"parameters", {
+                            {"type", "object"},                            
+                            {"properties", {
+                                {"command", {
+                                    {"type", "string"},
+                                    {"description", "The command to execute"}
+                                }}
+                            }},
+                            {"required", json::array({"command"})}
                         }}                            
                     }}
                 }
@@ -104,6 +143,40 @@ int main(int argc, char* argv[]) {
                     std::string line;
                     while (std::getline(file, line)){
                         result_content += line +  "\n";
+                    }
+                }
+            } else if (function_name == "Write"){
+                std::string file_path = args["file_path"];
+                std::string content = args["content"];
+
+                std::ofstream file(file_path);
+                if (!file.is_open()){
+                    result_content = "Error: cannot write file";
+                } else {
+                    file << content;
+                    file.close();
+                    result_content = "File written successfully";
+                }
+            } else if (function_name == "Bash"){
+                std::string command = args["command"];
+                std::string output;
+
+                char buffer[256];
+
+                FILE* pipe = popen(command.c_str(), "r");
+                if (!pipe){
+                    result_content="Error: failed to exexute command";
+                } else{
+                    while (fgets(buffer, sizeof(buffer), pipe) != nullptr){
+                        output += buffer;
+                    }
+
+                    int return_code = pclose(pipe);
+
+                    if (return_code != 0 && output.empty()){
+                        result_content = "Command failed";
+                    } else {
+                        result_content = output;
                     }
                 }
             }
