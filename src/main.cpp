@@ -41,8 +41,8 @@ int main(int argc, char* argv[]) {
 
     while (true){        
         json request_body = {
-            // {"model", "openai/gpt-4o-mini"},
-            {"model", "anthropic/claude-haiku-4.5"},
+            {"model", "openai/gpt-4o-mini"},
+            //{"model", "anthropic/claude-haiku-4.5"},
             {"messages", messages},
             {"tools", json::array({
                 {

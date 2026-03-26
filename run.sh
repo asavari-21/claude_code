@@ -7,7 +7,8 @@
 # Learn more: https://codecrafters.io/program-interface
 
 set -e # Exit early if any commands fail
-export OPENROUTER_API_KEY="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"
+#export OPENROUTER_API_KEY="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"
+export OPENROUTER_API_KEY="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"
 export VCPKG_ROOT=$HOME/vcpkg
 export VCPKG_FORCE_SYSTEM_BINARIES=1
 
